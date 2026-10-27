@@ -1,0 +1,56 @@
+run_name: "sim_deeponet_v2"
+
+model:
+  type: "deeponet"
+  node_in_dim: 4          # [x/l, y/l, q_local, bc_flag]
+  edge_in_dim: 3          # [dx/l, dy/l, dist/l]
+  global_dim: 3           # [l, phi, PQ]
+  hidden_dim: 128         # GNN Branch hidden size
+  edge_hidden: 64         # GNN Branch edge hidden size
+  num_layers: 4           # GNN Branch layers
+  trunk_hidden: 256       # Trunk MLP width
+  trunk_layers: 4         # Trunk MLP residual blocks
+  trunk_cols: [0, 1, 2, 3] # Indices in node_in_dim for Trunk
+  use_load_coords: true   # Compute and use relative load coords
+  p: 64                  # Number of basis functions per output
+  out_dim: 3              # [w, sigma_x, sigma_y]
+  n_freqs: 64             # Fourier features for spatial coords
+  fourier_scale: 1.0
+  trunk_dropout: 0.1
+  attn_dim: 128           # Cross-attention key/query dimension
+  n_heads: 4
+
+loss:
+  weights: [1.0, 1.0, 1.0]
+
+training:
+  loss_type: "pinn_biharmonic"
+  lambda_phys: 1.0e-6
+  epochs: 500
+  lr: 2.0e-4
+  lr_min: 1.0e-6
+  weight_decay: 1.0e-3
+  batch_size: 4
+  patience: 90
+  min_delta: 1.0e-7
+  grad_clip: 1.0
+  checkpoint_every: 50
+  device: "auto"
+  seed: 42
+  resume: false
+
+  augmentation:
+    p_edge_drop: 0.3
+    load_scale_range: [0.6, 1.4]
+
+data:
+  root: "generated_cases"
+  cache_dir: null
+  include_diagonals: true
+  force_rebuild: false
+  train_frac: 0.70
+  val_frac: 0.15
+  max_cases: null
+
+output:
+  run_dir: "runs/sim_deeponet_v2"

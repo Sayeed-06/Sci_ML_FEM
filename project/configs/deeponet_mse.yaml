@@ -1,0 +1,56 @@
+# DeepONet v4 + MSE Loss
+# Branch improvement: spatially-stratified pooling
+#   OLD: global_mean + global_max  → 2 × hidden → p * out_dim
+#   NEW: global_mean + global_max + load_region_mean + boundary_mean → 4 × hidden → p * out_dim
+#
+# Trunk is UNCHANGED — still purely spatial (x, y, q_local, bc_flag) + load-relative coords.
+# Material params (E, k, h, D) stay in the branch where DeepONet theory puts them.
+#
+# p reduced 256→128: with a richer branch, fewer basis functions are needed.
+# num_layers reduced 6→4: smaller model reduces overfitting.
+run_name: deeponet_mse
+
+model:
+  type: deeponet
+  node_in_dim: 11
+  edge_in_dim: 3
+  hidden_dim: 128
+  edge_hidden: 64
+  num_layers: 6              # restored from 4 (cross-attn handles expressiveness, not pooling)
+  trunk_hidden: 256
+  trunk_layers: 6
+  trunk_cols: [0, 1, 5, 7]  # SPATIAL ONLY: x_norm, y_norm, q_local, bc_flag
+  use_load_coords: true      # + dx, dy to load centroid → trunk_in = 6
+  p: 256                     # restored from 128 — richer basis + unique b_j per node
+  out_dim: 3
+  n_freqs: 64
+  fourier_scale: 1.0
+  trunk_dropout: 0.2
+  attn_dim: 128              # cross-attention key/query dim (= hidden_dim)
+  n_heads: 4                 # multi-head attention heads
+
+loss:
+  type: mse
+  weights: [1.0, 1.0, 1.0]
+
+training:
+  epochs: 500
+  lr: 2.0e-4
+  lr_min: 1.0e-6
+  weight_decay: 1.0e-2
+  batch_size: 4
+  patience: 80
+  grad_clip: 1.0
+  checkpoint_every: 50
+  device: cpu                # change to cuda
+  seed: 42
+
+data:
+  root: generated_cases
+  normalise_targets: true
+  train_frac: 0.70
+  val_frac: 0.15
+  include_diagonals: true
+
+output:
+  run_dir: runs/deeponet_mse

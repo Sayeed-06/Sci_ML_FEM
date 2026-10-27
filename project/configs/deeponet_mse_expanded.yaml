@@ -1,0 +1,54 @@
+# DeepONet fine-tuning run with pressure magnitude and alpha_T as inputs.
+run_name: deeponet_mse_expanded
+
+model:
+  type: deeponet
+  node_in_dim: 13
+  edge_in_dim: 3
+  hidden_dim: 128
+  edge_hidden: 64
+  num_layers: 6
+  trunk_hidden: 256
+  trunk_layers: 6
+  trunk_cols: [0, 1, 5, 7]
+  use_load_coords: true
+  p: 256
+  out_dim: 3
+  n_freqs: 64
+  fourier_scale: 1.0
+  trunk_dropout: 0.2
+  attn_dim: 128
+  n_heads: 4
+
+loss:
+  type: mse
+  weights: [1.0, 1.0, 1.0]
+
+training:
+  warm_start: runs/deeponet_mse/best.pt
+  epochs: 40
+  lr: 5.0e-5
+  lr_min: 1.0e-6
+  weight_decay: 1.0e-2
+  batch_size: 4
+  patience: 10
+  grad_clip: 1.0
+  checkpoint_every: 20
+  device: cuda
+  seed: 42
+
+data:
+  root: generated_cases
+  # Fine-tuning does not need to revisit every legacy case. This reproducible
+  # subset keeps the expanded run practical while retaining broad coverage.
+  max_cases: 6000
+  expanded_features: true
+  normalise_targets: true
+  train_frac: 0.70
+  val_frac: 0.15
+  include_diagonals: true
+  augment_symmetry: true
+  augment_jitter: true
+
+output:
+  run_dir: runs/deeponet_mse_expanded

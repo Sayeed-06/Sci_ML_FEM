@@ -1,0 +1,16 @@
+torch>=2.0.0
+torch-geometric>=2.5.0
+torch-scatter
+torch-sparse
+numpy>=1.24.0
+scipy>=1.10.0
+matplotlib>=3.7.0
+pyyaml>=6.0
+tqdm>=4.65.0
+pandas>=2.0.0
+scikit-learn>=1.2.0
+SALib>=1.6.0
+
+# RTX 50-series GPUs require a CUDA 12.8 build of PyTorch 2.7 or newer.
+# Example Windows install:
+# pip install torch==2.9.1 --index-url https://download.pytorch.org/whl/cu128

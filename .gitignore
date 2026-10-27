@@ -1,0 +1,62 @@
+# Python caches and test artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local environments and downloaded packages
+.venv/
+venv/
+venv_win/
+.analysis-packages/
+.python-packages/
+*.whl
+
+# Generated FEM and super-resolution datasets
+generated_cases/
+dataset_sr/
+data_zip/
+*.tar
+*.tar.gz
+*.zip
+
+# Model checkpoints and binary tensor caches
+*.pt
+*.pth
+*.ckpt
+
+# Training runs: retain only compact, reviewed analysis outputs
+project/runs/**
+!project/runs/sobol_expanded/
+!project/runs/sobol_expanded/**
+!project/runs/deeponet_mse_expanded/
+project/runs/deeponet_mse_expanded/**
+!project/runs/deeponet_mse_expanded/qoi_test_metrics.json
+
+similarity/runs/**
+!similarity/runs/sobol_similarity/
+!similarity/runs/sobol_similarity/**
+!similarity/runs/sim_deeponet_v1/
+similarity/runs/sim_deeponet_v1/**
+!similarity/runs/sim_deeponet_v1/qoi_test_metrics.json
+!similarity/runs/sim_deeponet_v1/test_metrics.json
+
+# Duplicate sharing packages and legacy nested environment
+Sobol_Analysis_Results/
+project/Sobol_Sensitivity_Sharing_Package/
+project/project/
+project/fix.py
+
+# Logs, scheduler output, and OS/editor files
+*.log
+slurm-*.out
+slurm-*.err
+slurm_*.out
+slurm_*.err
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+

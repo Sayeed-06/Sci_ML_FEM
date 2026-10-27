@@ -1,0 +1,51 @@
+{
+  "model": "deeponet_mse_expanded",
+  "checkpoint": "C:\\Users\\SAYEED\\Documents\\srip\\srip_re\\project\\runs\\deeponet_mse_expanded\\best.pt",
+  "fixed_geometry_case": "case_14510_EValue34998_Alpha9.34e-06_Kval0.185_pressure0.82",
+  "input_distributions": "independent uniform over observed training ranges",
+  "problem": {
+    "num_vars": 6,
+    "names": [
+      "E",
+      "thickness",
+      "k_winkler",
+      "delta_T",
+      "alpha_T",
+      "pressure_q"
+    ],
+    "bounds": [
+      [
+        27603.03,
+        41399.87
+      ],
+      [
+        150.02,
+        380.0
+      ],
+      [
+        0.02708,
+        0.29999
+      ],
+      [
+        0.0,
+        49.99
+      ],
+      [
+        6.90024626e-06,
+        1.19998119e-05
+      ],
+      [
+        0.7,
+        1.0
+      ]
+    ],
+    "sample_scaled": true
+  },
+  "sample_sizes": [
+    256,
+    512,
+    1024
+  ],
+  "num_resamples": 500,
+  "confidence_level": 0.95
+}

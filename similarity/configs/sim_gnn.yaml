@@ -1,0 +1,62 @@
+# ============================================================
+# Similarity-Based GNN — Training Configuration
+# ============================================================
+# All paths are configurable so this file works both locally
+# and on HPC (override data.root and output.run_dir via CLI).
+
+run_name: sim_gnn_v1
+
+# ── Model ─────────────────────────────────────────────────────────────
+model:
+  type: "sim_gnn"  # options: "sim_gnn", "graph_transformer"
+  node_in_dim: 4       # x/l, y/l, q_local, bc_flag
+  edge_in_dim: 3       # dx/l, dy/l, dist/l
+  global_dim:  3       # l, phi, P/Q  (FiLM conditioning)
+  hidden_dim:  256
+  edge_dim:    64
+  num_layers:  8       # 8 hops → sufficient influence radius for all l
+  out_dim:     3       # w, sigma_x, sigma_y
+  dropout:     0.2
+
+# ── Loss ──────────────────────────────────────────────────────────────
+loss:
+  # Weighted MSE on normalised outputs.
+  # w typically has larger normalised variance so balance with equal weights;
+  # increase stress weights if stress accuracy is more critical.
+  weights: [1.0, 1.0, 1.0]
+
+# ── Training ──────────────────────────────────────────────────────────
+training:
+  loss_type: "pinn_biharmonic"
+  lambda_phys: 1.0e-6
+  augmentation:
+    p_edge_drop: 0.1
+    load_scale_range: [0.8, 1.2]
+  epochs:           500
+  lr:               2.0e-4
+  lr_min:           1.0e-6
+  weight_decay:     1.0e-3
+  batch_size:       4          # 4 graphs per step
+  patience:         90         # early stopping patience
+  min_delta:        1.0e-7
+  grad_clip:        1.0
+  checkpoint_every: 50
+  device:          auto        # 'auto' → cuda if available, else cpu
+  seed:            42
+  resume:          false       # set true to resume from latest checkpoint
+
+# ── Data ──────────────────────────────────────────────────────────────
+data:
+  # Path to the directory containing Case_* subdirectories.
+  # Override with --data.root /path/on/cluster on HPC.
+  root:              /path/to/generated_cases_20k
+  cache_dir:         null       # null → root/cache_sim (auto)
+  include_diagonals: true
+  normalise_targets: true
+  train_frac:        0.70
+  val_frac:          0.15       # remaining 0.15 → test
+  max_cases:         null       # null → all cases; set integer for quick test
+
+# ── Output ────────────────────────────────────────────────────────────
+output:
+  run_dir: runs/sim_gnn_v1     # relative or absolute path for checkpoints + logs

@@ -1,0 +1,40 @@
+# Model 3: Graph Transformer + MSE Loss
+run_name: transformer_mse
+
+model:
+  type: transformer
+  node_in_dim: 11
+  edge_in_dim: 3
+  hidden_dim: 256
+  edge_hidden: 128
+  num_layers: 8
+  num_heads: 8
+  out_dim: 3
+  dropout: 0.1
+  attn_dropout: 0.1
+
+loss:
+  type: mse
+  weights: [1.0, 1.0, 1.0]
+
+training:
+  epochs: 300
+  lr: 5.0e-4                 # slightly lower for transformer stability
+  lr_min: 1.0e-6
+  weight_decay: 1.0e-4
+  batch_size: 4
+  patience: 40
+  grad_clip: 1.0
+  checkpoint_every: 50
+  device: cpu
+  seed: 42
+
+data:
+  root: generated_cases
+  normalise_targets: true
+  train_frac: 0.70
+  val_frac: 0.15
+  include_diagonals: true
+
+output:
+  run_dir: runs/transformer_mse

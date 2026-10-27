@@ -1,0 +1,41 @@
+# Model 2: GNN + Physics-Informed Loss
+run_name: gnn_pinn
+
+model:
+  type: gnn
+  node_in_dim: 11
+  edge_in_dim: 3
+  hidden_dim: 128
+  edge_hidden: 64
+  num_layers: 6
+  out_dim: 3
+  dropout: 0.0
+
+loss:
+  type: pinn
+  lambda_data: 1.0
+  lambda_pde: 1.0e-6
+  lambda_stress: 1.0e-5
+  lambda_bc: 0.05            # low: Winkler slabs have free edges
+
+training:
+  epochs: 300
+  lr: 1.0e-3
+  lr_min: 1.0e-6
+  weight_decay: 1.0e-4
+  batch_size: 4
+  patience: 50               # more patience for PINN (slower convergence)
+  grad_clip: 1.0
+  checkpoint_every: 50
+  device: cpu
+  seed: 42
+
+data:
+  root: generated_cases
+  normalise_targets: true
+  train_frac: 0.70
+  val_frac: 0.15
+  include_diagonals: true
+
+output:
+  run_dir: runs/gnn_pinn
